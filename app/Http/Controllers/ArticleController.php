@@ -10,8 +10,13 @@ class ArticleController extends Controller
     public function index()
     {
         $articles = Article::paginate();
-        $url = route('articles.index');
 
-        return view('article.index', compact('articles', 'url'));
+        return view('article.index', compact('articles'));
+    }
+
+    public function show($id)
+    {
+        $article = Article::findOrFail($id);
+        return view('article.show', compact('article'));
     }
 }

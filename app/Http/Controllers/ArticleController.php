@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\ActionsWithArticleRequest;
 use App\Models\Article;
 
 class ArticleController extends Controller
@@ -26,17 +27,42 @@ class ArticleController extends Controller
         return view('article.create', compact('article'));
     }
 
-    public function store(Request $request)
+    public function store(ActionsWithArticleRequest $request)
     {
-        $data = $this->validate($request, [
-            'name' => 'required|unique:articles',
-            'body' => 'required|min:5',
+        $data1 = $request->validated();
+
+        $data2 = $this->validate($request, [
+            'name' => 'unique:articles',
         ]);
+
+        $data = array_merge($data1, $data2);
 
         $article = new Article();
         $article->fill($data);
         $article->save();
 
         return redirect()->route('articles.index')->withSuccess('Статья успешно добавлена!');
+    }
+
+    public function edit($id)
+    {
+        $article = Article::findOrFail($id);
+        return view('article.edit', compact('article'));
+    }
+
+    public function update(ActionsWithArticleRequest $request, $id)
+    {
+        $data1 = $request->validated();
+
+        $article = Article::findOrFail($id);
+        $data2 = $this->validate($request, [
+            'name' => 'unique:articles,name,' . $article->id,
+        ]);
+
+        $data = array_merge($data1, $data2);
+
+        $article->fill($data);
+        $article->save();
+        return redirect()->route('articles.index')->withSuccess('Статья успешно изменена!');
     }
 }

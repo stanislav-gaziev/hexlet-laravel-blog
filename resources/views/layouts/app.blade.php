@@ -12,6 +12,7 @@
     </head>
     <body>
         <div class="container mt-4">
+            <a href="{{route('pages.about')}}">О блоге</a>
             <a href="{{route('articles.index')}}">Статьи</a>
         </div>
         <div class="container mt-4">

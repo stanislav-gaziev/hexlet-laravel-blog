@@ -2,31 +2,40 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
 use Illuminate\Http\Request;
 use App\Http\Requests\ActionsWithArticleRequest;
-use App\Models\Article;
 
 class ArticleController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
         $articles = Article::paginate();
-
         return view('article.index', compact('articles'));
     }
 
-    public function show($id)
-    {
-        $article = Article::findOrFail($id);
-        return view('article.show', compact('article'));
-    }
-
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function create()
     {
         $article = new Article();
         return view('article.create', compact('article'));
     }
 
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \App\Http\Requests\ActionsWithArticleRequest  $request
+     * @return \Illuminate\Http\Response
+     */
     public function store(ActionsWithArticleRequest $request)
     {
         $data1 = $request->validated();
@@ -44,17 +53,39 @@ class ArticleController extends Controller
         return redirect()->route('articles.index')->withSuccess('Статья успешно добавлена!');
     }
 
-    public function edit($id)
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Article  $article
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Article $article)
     {
-        $article = Article::findOrFail($id);
+        return view('article.show', compact('article'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\Article  $article
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Article $article)
+    {
         return view('article.edit', compact('article'));
     }
 
-    public function update(ActionsWithArticleRequest $request, $id)
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \App\Http\Requests\ActionsWithArticleRequest  $request
+     * @param  \App\Models\Article  $article
+     * @return \Illuminate\Http\Response
+     */
+    public function update(ActionsWithArticleRequest $request, Article $article)
     {
         $data1 = $request->validated();
 
-        $article = Article::findOrFail($id);
         $data2 = $this->validate($request, [
             'name' => 'unique:articles,name,' . $article->id,
         ]);
@@ -66,9 +97,14 @@ class ArticleController extends Controller
         return redirect()->route('articles.index')->withSuccess('Статья успешно изменена!');
     }
 
-    public function destroy($id)
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Article  $article
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Article $article)
     {
-        $article = Article::find($id);
         if ($article) {
             $article->delete();
         }
